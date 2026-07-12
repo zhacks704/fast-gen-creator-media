@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<!-- skill:chrome -->
+<style>
+/* Credit line — bottom-right */
+.design-ui-credit {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  font: 11px/1 system-ui, sans-serif;
+  color: rgba(128,128,128,0.5);
+  pointer-events: none;
+  z-index: 2147483647;
+  transition: opacity 0.4s ease;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+
+/* Hide chrome on touch devices */
+@media (hover: none) {
+  .design-ui-credit { display: none; }
+}
+
+/* Print fixes */
+@media print {
+  * {
+    transition: none !important;
+    animation: none !important;
+    box-shadow: none !important;
+  }
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .design-ui-credit { display: none !important; }
+}
+
+</style>
+<script>
+(function () {
+    // Design-ui pages are single compositions, so the whole body is editable.
+    function markEditable() {
+        document.body.classList.add('artifact-editable');
+    }
+
+    // Credit badge with idle-fade. Hover devices only.
+    function initChromeUI() {
+        if (!matchMedia('(hover: hover)').matches) return;
+
+        var credit = document.createElement('div');
+        credit.className = 'design-ui-credit';
+        credit.setAttribute('aria-hidden', 'true');
+        credit.innerHTML = '\u{1F49C} by ClickUp Brain';
+        document.body.appendChild(credit);
+
+        var timer = null;
+        var fade = function (out) { credit.style.opacity = out ? '0' : ''; };
+        fade(true);
+        var show = function () {
+            fade(false);
+            clearTimeout(timer);
+            timer = setTimeout(function () { fade(true); }, 3000);
+        };
+        document.addEventListener('mousemove', show);
+        show();
+    }
+
+    function init() {
+        markEditable();
+        initChromeUI();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
+</script>
+<!-- /skill:chrome -->
+<!-- skill:libraries -->
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.383.0/dist/umd/lucide.min.js" integrity="sha384-wHFvAtjmgnkA2PJcMsDaCgdipf7X7YV44X/igbLHpvGiq6T5/PvFKl93grpvtbQT" crossorigin="anonymous"></script>
+<script>document.addEventListener("DOMContentLoaded",()=>lucide.createIcons())</script>
+<!-- /skill:libraries -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZAID Media Saver - Save Public Media Online</title>
+<meta name="description" content="A simple and privacy-focused tool to save publicly available media content through your browser.">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="ZAID Media Saver - Save Public Media Online">
+<meta property="og:description" content="A simple and privacy-focused tool to save publicly available media content through your browser.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"Is ZAID Media Saver free to use?","acceptedAnswer":{"@type":"Answer","text":"Yes. The browser utility is free to use and requires no account or login."}},
+    {"@type":"Question","name":"Do I need to give you my social media password?","acceptedAnswer":{"@type":"Answer","text":"Never. We never ask for platform passwords and we cannot access private or login-protected content."}},
+    {"@type":"Question","name":"What content can I save?","acceptedAnswer":{"@type":"Answer","text":"Only publicly accessible media: public videos, images, reels, and posts, where technically and legally allowed."}},
+    {"@type":"Question","name":"Do you store the files I process?","acceptedAnswer":{"@type":"Answer","text":"Temporary processed files are deleted automatically. We do not keep a library of your activity."}},
+    {"@type":"Question","name":"Is downloading public content legal?","acceptedAnswer":{"@type":"Answer","text":"It depends on the content and the platform's rules. You are responsible for having permission or a lawful reason to save any file."}}
+  ]
+}
+</script>
+<style>
+  :root{
+    --bg: oklch(98.6% 0.006 70);
+    --surface: oklch(99.6% 0.004 70);
+    --surface-2: oklch(96.2% 0.009 68);
+    --surface-3: oklch(93.5% 0.011 66);
+    --ink: oklch(24% 0.012 55);
+    --muted: oklch(46% 0.014 58);
+    --faint: oklch(60% 0.012 62);
+    --border: oklch(89.5% 0.011 68);
+    --border-strong: oklch(82% 0.014 66);
+    --accent: oklch(58% 0.2 30);
+    --accent-hover: oklch(52% 0.2 30);
+    --accent-soft: oklch(93% 0.045 40);
+    --ok: oklch(58% 0.13 155);
+    --ok-soft: oklch(94% 0.05 155);
+    --warn: oklch(72% 0.14 75);
+    --shadow-sm: 0 1px 2px oklch(24% 0.012 55 / .06), 0 1px 1px oklch(24% 0.012 55 / .04);
+    --shadow-md: 0 6px 20px oklch(24% 0.012 55 / .08), 0 2px 6px oklch(24% 0.012 55 / .05);
+    --shadow-lg: 0 24px 60px oklch(24% 0.012 55 / .14), 0 6px 18px oklch(24% 0.012 55 / .08);
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+    --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-6:24px; --sp-8:32px; --sp-12:48px; --sp-16:64px; --sp-24:96px;
+    --maxw: 1120px;
+    --radius: 14px;
+    --radius-sm: 9px;
+  }
+  [data-theme="dark"]{
+    --bg: oklch(17.5% 0.011 58);
+    --surface: oklch(21.5% 0.013 58);
+    --surface-2: oklch(25.5% 0.015 58);
+    --surface-3: oklch(29.5% 0.017 58);
+    --ink: oklch(93% 0.01 78);
+    --muted: oklch(72% 0.013 70);
+    --faint: oklch(58% 0.014 64);
+    --border: oklch(31% 0.015 58);
+    --border-strong: oklch(38% 0.017 58);
+    --accent: oklch(67% 0.17 32);
+    --accent-hover: oklch(72% 0.17 32);
+    --accent-soft: oklch(32% 0.07 34);
+    --ok: oklch(72% 0.13 155);
+    --ok-soft: oklch(30% 0.05 155);
+    --shadow-sm: 0 1px 2px oklch(0% 0 0 / .3);
+    --shadow-md: 0 8px 24px oklch(0% 0 0 / .38);
+    --shadow-lg: 0 28px 70px oklch(0% 0 0 / .5);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    background:var(--bg);color:var(--ink);
+    line-height:1.5;font-size:16px;
+    -webkit-font-smoothing:antialiased;
+    transition:background .4s var(--ease), color .4s var(--ease);
+  }
+  h1,h2,h3,h4{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:700;line-height:1.08;text-wrap:balance;letter-spacing:-0.02em;font-optical-sizing:auto}
+  p{text-wrap:pretty}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--accent-soft);color:var(--ink)}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--sp-6)}
+  .accent{color:var(--accent)}
+  button{font-family:inherit;cursor:pointer}
+  :focus-visible{outline:2.5px solid var(--accent);outline-offset:2px;border-radius:6px}
+
+  /* NAV */
+  header.nav{position:sticky;top:0;z-index:50;background:color-mix(in oklch, var(--bg) 82%, transparent);backdrop-filter:blur(14px) saturate(1.4);border-bottom:1px solid var(--border)}
+  .nav-inner{display:flex;align-items:center;gap:var(--sp-6);height:66px;max-width:var(--maxw);margin:0 auto;padding:0 var(--sp-6)}
+  .logo{display:flex;align-items:center;gap:10px;font-family:"Bricolage Grotesque";font-weight:800;font-size:1.18rem;letter-spacing:-0.03em}
+  .logo .mark{width:34px;height:34px;border-radius:9px;background:var(--accent);display:grid;place-items:center;color:oklch(98% 0.01 70);flex-shrink:0;box-shadow:var(--shadow-sm)}
+  .logo .mark i{width:19px;height:19px}
+  nav.links{display:flex;gap:2px;margin-left:auto}
+  nav.links a{padding:8px 13px;border-radius:8px;font-size:.92rem;font-weight:500;color:var(--muted);transition:color .18s var(--ease), background .18s var(--ease)}
+  nav.links a:hover{color:var(--ink);background:var(--surface-2)}
+  nav.links a.active{color:var(--ink);background:var(--surface-2)}
+  .nav-tools{display:flex;align-items:center;gap:var(--sp-2)}
+  .icon-btn{width:38px;height:38px;border-radius:9px;border:1px solid var(--border);background:var(--surface);color:var(--muted);display:grid;place-items:center;transition:all .2s var(--ease)}
+  .icon-btn:hover{color:var(--ink);border-color:var(--border-strong);transform:translateY(-1px)}
+  .icon-btn i{width:18px;height:18px}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:10px;font-weight:600;font-size:.94rem;border:1px solid transparent;transition:all .2s var(--ease);white-space:nowrap}
+  .btn.primary{background:var(--accent);color:oklch(98% 0.01 70)}
+  .btn.primary:hover{background:var(--accent-hover);transform:translateY(-1px);box-shadow:var(--shadow-md)}
+  .btn.ghost{background:var(--surface);border-color:var(--border-strong);color:var(--ink)}
+  .btn.ghost:hover{border-color:var(--accent);color:var(--accent)}
+  .btn i{width:17px;height:17px}
+  .menu-toggle{display:none}
+
+  /* PAGES */
+  .page{display:none;animation:fade .5s var(--ease)}
+  .page.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  /* HERO */
+  .hero{padding:var(--sp-24) 0 var(--sp-16);position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:0;background:
+    radial-gradient(60% 60% at 78% -10%, var(--accent-soft), transparent 70%),
+    radial-gradient(50% 50% at 10% 5%, oklch(92% 0.03 200 / .5), transparent 70%);
+    opacity:.7;pointer-events:none;z-index:0}
+  [data-theme="dark"] .hero::before{opacity:.4}
+  .hero .wrap{position:relative;z-index:1}
+  .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:.8rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:6px 13px;border-radius:100px;margin-bottom:var(--sp-6)}
+  .eyebrow i{width:14px;height:14px}
+  .hero h1{font-size:clamp(2.6rem,6vw,4.4rem);max-width:15ch;margin-bottom:var(--sp-6);font-weight:800}
+  .hero .lead{font-size:clamp(1.05rem,2vw,1.3rem);color:var(--muted);max-width:56ch;line-height:1.55}
+
+  /* UTILITY / PROCESSOR */
+  .processor{margin-top:var(--sp-12);background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:var(--sp-8);box-shadow:var(--shadow-lg);max-width:760px}
+  .proc-label{font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:var(--sp-3);display:flex;align-items:center;gap:7px}
+  .proc-label i{width:15px;height:15px;color:var(--accent)}
+  .input-row{display:flex;gap:var(--sp-3);flex-wrap:wrap}
+  .url-field{flex:1;min-width:240px;position:relative;display:flex;align-items:center}
+  .url-field > i{position:absolute;left:15px;width:19px;height:19px;color:var(--faint);pointer-events:none}
+  .url-field input{width:100%;padding:15px 15px 15px 44px;font-size:1rem;font-family:inherit;border:1.5px solid var(--border-strong);border-radius:12px;background:var(--bg);color:var(--ink);transition:border-color .2s var(--ease), box-shadow .2s var(--ease)}
+  .url-field input::placeholder{color:var(--faint)}
+  .url-field input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+  .paste-btn{position:absolute;right:9px;padding:7px 12px;font-size:.82rem;font-weight:600;border-radius:8px;border:1px solid var(--border);background:var(--surface-2);color:var(--muted);display:flex;align-items:center;gap:6px;transition:all .18s var(--ease)}
+  .paste-btn:hover{color:var(--accent);border-color:var(--accent)}
+  .paste-btn i{width:14px;height:14px}
+  .btn-process{padding:15px 26px;font-size:1rem}
+  .proc-hint{margin-top:var(--sp-4);font-size:.85rem;color:var(--faint);display:flex;align-items:center;gap:8px}
+  .proc-hint i{width:15px;height:15px;flex-shrink:0}
+  .field-error{color:var(--accent);font-size:.85rem;margin-top:var(--sp-3);display:none;align-items:center;gap:7px}
+  .field-error.show{display:flex}
+  .field-error i{width:15px;height:15px}
+
+  /* RESULT */
+  .result{margin-top:var(--sp-6);border-top:1px solid var(--border);padding-top:var(--sp-6);display:none}
+  .result.show{display:block;animation:fade .45s var(--ease)}
+  .result-inner{display:flex;gap:var(--sp-6);flex-wrap:wrap}
+  .thumb{width:200px;flex-shrink:0;aspect-ratio:9/12;border-radius:12px;overflow:hidden;position:relative;background:linear-gradient(135deg,var(--surface-3),var(--surface-2));border:1px solid var(--border);display:grid;place-items:center}
+  .thumb .play{width:52px;height:52px;border-radius:50%;background:oklch(100% 0 0 / .9);display:grid;place-items:center;box-shadow:var(--shadow-md)}
+  .thumb .play i{width:24px;height:24px;color:var(--accent);margin-left:3px}
+  .thumb .badge{position:absolute;top:10px;left:10px;background:oklch(20% 0.01 55 / .78);color:oklch(97% 0 0);font-size:.72rem;font-weight:600;padding:4px 9px;border-radius:6px;backdrop-filter:blur(4px)}
+  .result-meta{flex:1;min-width:240px}
+  .result-meta h3{font-size:1.15rem;margin-bottom:var(--sp-3)}
+  .meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:var(--sp-3);margin-bottom:var(--sp-6)}
+  .meta-cell{background:var(--surface-2);border-radius:10px;padding:11px 13px}
+  .meta-cell .k{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--faint);font-weight:600}
+  .meta-cell .v{font-size:.95rem;font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums}
+  .quality-row{display:flex;gap:var(--sp-3);align-items:flex-end;flex-wrap:wrap}
+  .quality-row .sel{flex:1;min-width:180px}
+  .quality-row label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:6px}
+  select{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--border-strong);background:var(--bg);color:var(--ink);font-family:inherit;font-size:.95rem}
+  select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+
+  /* SKELETON */
+  .skeleton{display:none;margin-top:var(--sp-6);border-top:1px solid var(--border);padding-top:var(--sp-6)}
+  .skeleton.show{display:flex;gap:var(--sp-6);flex-wrap:wrap}
+  .sk{background:linear-gradient(90deg,var(--surface-2) 25%,var(--surface-3) 50%,var(--surface-2) 75%);background-size:200% 100%;animation:shimmer 1.3s infinite linear;border-radius:10px}
+  @keyframes shimmer{to{background-position:-200% 0}}
+
+  /* SECTIONS */
+  section.block{padding:var(--sp-16) 0}
+  .section-head{max-width:60ch;margin-bottom:var(--sp-12)}
+  .section-head .eyebrow{margin-bottom:var(--sp-4)}
+  .section-head h2{font-size:clamp(1.9rem,4vw,2.8rem);margin-bottom:var(--sp-4)}
+  .section-head p{font-size:1.1rem;color:var(--muted);max-width:56ch}
+
+  /* TRUST STRIP */
+  .trust{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--sp-1);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+  .trust-item{padding:var(--sp-6);border-right:1px solid var(--border)}
+  .trust-item:last-child{border-right:none}
+  .trust-item i{width:24px;height:24px;color:var(--accent);margin-bottom:var(--sp-3)}
+  .trust-item h4{font-size:1rem;margin-bottom:6px}
+  .trust-item p{font-size:.9rem;color:var(--muted);line-height:1.5}
+
+  /* STEPS */
+  .steps{display:flex;flex-direction:column;gap:var(--sp-1)}
+  .step{display:flex;gap:var(--sp-6);padding:var(--sp-6);border-radius:var(--radius);transition:background .25s var(--ease)}
+  .step:hover{background:var(--surface)}
+  .step-num{font-family:"Bricolage Grotesque";font-size:2.4rem;font-weight:800;color:var(--accent);line-height:1;width:64px;flex-shrink:0;font-variant-numeric:tabular-nums;opacity:.85}
+  .step-body h3{font-size:1.2rem;margin-bottom:6px}
+  .step-body p{color:var(--muted);max-width:60ch}
+
+  /* PLATFORMS */
+  .plat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--sp-4)}
+  .plat{border:1px solid var(--border);border-radius:var(--radius);padding:var(--sp-6);background:var(--surface);transition:all .25s var(--ease)}
+  .plat:hover{border-color:var(--border-strong);transform:translateY(-3px);box-shadow:var(--shadow-md)}
+  .plat .ico{width:44px;height:44px;border-radius:11px;background:var(--surface-2);display:grid;place-items:center;margin-bottom:var(--sp-4)}
+  .plat .ico i{width:22px;height:22px;color:var(--accent)}
+  .plat h4{font-size:1.05rem;margin-bottom:6px}
+  .plat p{font-size:.88rem;color:var(--muted)}
+  .plat .tag{display:inline-block;margin-top:var(--sp-3);font-size:.74rem;font-weight:600;color:var(--ok);background:var(--ok-soft);padding:3px 9px;border-radius:6px}
+  .notice-box{margin-top:var(--sp-8);border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);padding:var(--sp-6);display:flex;gap:var(--sp-4)}
+  .notice-box i{width:22px;height:22px;color:var(--warn);flex-shrink:0}
+  .notice-box h4{font-size:1rem;margin-bottom:4px}
+  .notice-box p{font-size:.9rem;color:var(--muted)}
+
+  /* FAQ */
+  .faq{max-width:760px}
+  .faq-item{border-bottom:1px solid var(--border)}
+  .faq-q{width:100%;text-align:left;background:none;border:none;padding:var(--sp-6) 0;display:flex;justify-content:space-between;gap:var(--sp-4);align-items:center;font-size:1.08rem;font-weight:600;color:var(--ink);font-family:"Bricolage Grotesque"}
+  .faq-q i{width:20px;height:20px;color:var(--accent);flex-shrink:0;transition:transform .3s var(--ease)}
+  .faq-q[aria-expanded="true"] i{transform:rotate(45deg)}
+  .faq-a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s var(--ease)}
+  .faq-a[data-open="true"]{grid-template-rows:1fr}
+  .faq-a > div{overflow:hidden}
+  .faq-a p{color:var(--muted);padding-bottom:var(--sp-6);max-width:64ch;line-height:1.6}
+
+  /* LEGAL / DOC PAGES */
+  .doc{max-width:74ch;padding:var(--sp-16) 0}
+  .doc .eyebrow{margin-bottom:var(--sp-4)}
+  .doc h1{font-size:clamp(2rem,4vw,3rem);margin-bottom:var(--sp-3)}
+  .doc .updated{color:var(--faint);font-size:.9rem;margin-bottom:var(--sp-12)}
+  .doc h2{font-size:1.4rem;margin:var(--sp-12) 0 var(--sp-4)}
+  .doc h3{font-size:1.1rem;margin:var(--sp-8) 0 var(--sp-3)}
+  .doc p{color:var(--muted);margin-bottom:var(--sp-4);line-height:1.7}
+  .doc ul{color:var(--muted);margin:0 0 var(--sp-4) var(--sp-6);line-height:1.7}
+  .doc li{margin-bottom:8px}
+  .doc strong{color:var(--ink)}
+  .doc .callout{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:var(--sp-6);margin:var(--sp-8) 0}
+  .doc .callout p:last-child{margin-bottom:0}
+
+  /* CONTACT */
+  .contact-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:var(--sp-12);align-items:start}
+  form.contact{display:flex;flex-direction:column;gap:var(--sp-4)}
+  .fg label{display:block;font-size:.85rem;font-weight:600;margin-bottom:7px}
+  .fg input,.fg textarea,.fg select{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--border-strong);background:var(--surface);color:var(--ink);font-family:inherit;font-size:.95rem;transition:border-color .2s var(--ease),box-shadow .2s var(--ease)}
+  .fg input:focus,.fg textarea:focus,.fg select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+  .fg textarea{resize:vertical;min-height:130px}
+  .contact-side{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:var(--sp-8)}
+  .contact-side h3{font-size:1.15rem;margin-bottom:var(--sp-4)}
+  .contact-side .row{display:flex;gap:12px;align-items:flex-start;margin-bottom:var(--sp-6)}
+  .contact-side .row i{width:19px;height:19px;color:var(--accent);flex-shrink:0;margin-top:2px}
+  .contact-side .row .k{font-size:.8rem;color:var(--faint);font-weight:600}
+  .contact-side .row .v{font-size:.95rem;font-weight:500}
+
+  /* FOOTER */
+  footer.site{border-top:1px solid var(--border);background:var(--surface);margin-top:var(--sp-16)}
+  .foot-top{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:var(--sp-12);padding:var(--sp-16) 0 var(--sp-12)}
+  .foot-brand .logo{margin-bottom:var(--sp-4)}
+  .foot-brand p{color:var(--muted);font-size:.92rem;max-width:42ch;line-height:1.6}
+  .foot-col h5{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);margin-bottom:var(--sp-4);font-weight:700}
+  .foot-col a{display:block;color:var(--muted);font-size:.92rem;padding:5px 0;transition:color .18s var(--ease)}
+  .foot-col a:hover{color:var(--accent)}
+  .legal-notice{border-top:1px solid var(--border);padding:var(--sp-8) 0}
+  .legal-notice p{font-size:.83rem;color:var(--faint);line-height:1.65;max-width:none}
+  .legal-notice strong{color:var(--muted)}
+  .foot-bottom{border-top:1px solid var(--border);padding:var(--sp-6) 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(--sp-3);align-items:center}
+  .foot-bottom p{font-size:.85rem;color:var(--faint)}
+  .foot-bottom .mini{display:flex;gap:var(--sp-4)}
+  .foot-bottom .mini a{font-size:.85rem;color:var(--faint)}
+  .foot-bottom .mini a:hover{color:var(--accent)}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:13px 20px;border-radius:12px;font-size:.9rem;font-weight:500;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:all .35s var(--ease);z-index:100;display:flex;align-items:center;gap:10px;max-width:90vw}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast i{width:18px;height:18px;color:var(--accent)}
+
+  /* MOBILE */
+  @media (max-width:860px){
+    nav.links{display:none;position:fixed;inset:66px 0 auto 0;flex-direction:column;background:var(--bg);border-bottom:1px solid var(--border);padding:var(--sp-4);gap:2px;margin-left:0}
+    nav.links.open{display:flex}
+    nav.links a{padding:13px}
+    .menu-toggle{display:grid}
+    .nav-desktop-cta{display:none}
+    .contact-grid{grid-template-columns:1fr;gap:var(--sp-8)}
+    .foot-top{grid-template-columns:1fr 1fr;gap:var(--sp-8)}
+    .foot-brand{grid-column:1/-1}
+    .step-num{font-size:1.8rem;width:44px}
+    .hero{padding:var(--sp-16) 0 var(--sp-12)}
+    .processor{padding:var(--sp-6)}
+    .trust-item{border-right:none;border-bottom:1px solid var(--border)}
+    .trust-item:last-child{border-bottom:none}
+  }
+  @media (max-width:520px){
+    .foot-top{grid-template-columns:1fr}
+    .thumb{width:100%}
+    .btn-process{width:100%;justify-content:center}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="#home" data-page="home">
+      <span class="mark"><i data-lucide="download"></i></span>
+      ZAID<span style="color:var(--accent)">.</span>
+    </a>
+    <nav class="links" id="navLinks">
+      <a href="#home" data-page="home">Home</a>
+      <a href="#how" data-page="how">How It Works</a>
+      <a href="#platforms" data-page="platforms">Supported Platforms</a>
+      <a href="#faq" data-page="faq">FAQ</a>
+      <a href="#contact" data-page="contact">Contact</a>
+    </nav>
+    <div class="nav-tools">
+      <button class="icon-btn" id="themeBtn" aria-label="Toggle theme"><i data-lucide="moon"></i></button>
+      <a href="#home" data-page="home" class="btn primary nav-desktop-cta"><i data-lucide="zap"></i>Save media</a>
+      <button class="icon-btn menu-toggle" id="menuBtn" aria-label="Menu"><i data-lucide="menu"></i></button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <section class="hero">
+    <div class="wrap">
+      <span class="eyebrow"><i data-lucide="shield-check"></i>Privacy-first, no login</span>
+      <h1>Save publicly available media, without the junk.</h1>
+      <p class="lead">A clean, fast browser utility for saving public videos and images. No fake buttons, no popup maze, no account. Use responsibly and respect creator rights.</p>
+
+      <div class="processor">
+        <div class="proc-label"><i data-lucide="link"></i>Paste a public media link</div>
+        <div class="input-row">
+          <div class="url-field">
+            <i data-lucide="globe"></i>
+            <input type="url" id="urlInput" placeholder="https://platform.com/username/post/..." autocomplete="off" spellcheck="false">
+            <button class="paste-btn" id="pasteBtn"><i data-lucide="clipboard"></i>Paste</button>
+          </div>
+          <button class="btn primary btn-process" id="processBtn"><i data-lucide="search"></i>Process</button>
+        </div>
+        <div class="field-error" id="fieldError"><i data-lucide="alert-circle"></i><span></span></div>
+        <div class="proc-hint"><i data-lucide="lock"></i>We never ask for passwords and cannot access private or login-only content.</div>
+
+        <div class="skeleton" id="skeleton">
+          <div class="sk" style="width:200px;aspect-ratio:9/12;flex-shrink:0"></div>
+          <div style="flex:1;min-width:240px;display:flex;flex-direction:column;gap:12px">
+            <div class="sk" style="height:22px;width:70%"></div>
+            <div class="sk" style="height:60px;width:100%"></div>
+            <div class="sk" style="height:46px;width:100%;margin-top:auto"></div>
+          </div>
+        </div>
+
+        <div class="result" id="result">
+          <div class="result-inner">
+            <div class="thumb">
+              <span class="badge" id="rBadge">Public</span>
+              <div class="play"><i data-lucide="play"></i></div>
+            </div>
+            <div class="result-meta">
+              <h3 id="rTitle">Public post detected</h3>
+              <div class="meta-grid">
+                <div class="meta-cell"><div class="k">Type</div><div class="v" id="rType">Video</div></div>
+                <div class="meta-cell"><div class="k">Format</div><div class="v" id="rFormat">MP4</div></div>
+                <div class="meta-cell"><div class="k">Quality</div><div class="v" id="rQuality">1080p</div></div>
+                <div class="meta-cell"><div class="k">Est. size</div><div class="v" id="rSize">8.4 MB</div></div>
+              </div>
+              <div class="quality-row">
+                <div class="sel">
+                  <label for="qSelect">Choose quality (source-limited)</label>
+                  <select id="qSelect"></select>
+                </div>
+                <button class="btn primary" id="saveBtn" style="padding:12px 22px"><i data-lucide="download"></i>Save file</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="trust">
+        <div class="trust-item">
+          <i data-lucide="eye-off"></i>
+          <h4>No tracking</h4>
+          <p>No cross-site tracking, no ad pixels following you around the web.</p>
+        </div>
+        <div class="trust-item">
+          <i data-lucide="trash-2"></i>
+          <h4>Auto-delete</h4>
+          <p>Temporary processed files are removed automatically after handling.</p>
+        </div>
+        <div class="trust-item">
+          <i data-lucide="key-round"></i>
+          <h4>No passwords</h4>
+          <p>We never request platform credentials or private account access.</p>
+        </div>
+        <div class="trust-item">
+          <i data-lucide="megaphone-off"></i>
+          <h4>No dark patterns</h4>
+          <p>No fake download buttons, misleading ads, or surprise redirects.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" style="padding-top:0">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow"><i data-lucide="scale"></i>Responsible use</span>
+        <h2>A utility, not a loophole.</h2>
+        <p>ZAID handles publicly accessible media only. It will not touch private accounts, login-required pages, or anything behind a security wall. What you do with a saved file, and whether you have the right to, is on you.</p>
+      </div>
+      <a href="#how" data-page="how" class="btn ghost"><i data-lucide="arrow-right"></i>See how it works</a>
+    </div>
+  </section>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="page" id="page-how">
+  <section class="block">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow"><i data-lucide="route"></i>How it works</span>
+        <h2>Six steps, zero clutter.</h2>
+        <p>Paste a public link and ZAID walks it through a predictable pipeline. No mystery, no bait, no ten-tab redirect chain.</p>
+      </div>
+      <div class="steps">
+        <div class="step"><div class="step-num">01</div><div class="step-body"><h3>Validate the URL</h3><p>We check that the link is well-formed and points to a supported public source before anything else happens.</p></div></div>
+        <div class="step"><div class="step-num">02</div><div class="step-body"><h3>Identify the source</h3><p>The processor recognizes which supported platform the link belongs to and how its public media is structured.</p></div></div>
+        <div class="step"><div class="step-num">03</div><div class="step-body"><h3>Check availability</h3><p>If the content is private, removed, or login-gated, we stop here and tell you plainly. No workarounds.</p></div></div>
+        <div class="step"><div class="step-num">04</div><div class="step-body"><h3>Read media info</h3><p>We surface the thumbnail, media type, and file format so you know exactly what you're about to save.</p></div></div>
+        <div class="step"><div class="step-num">05</div><div class="step-body"><h3>Offer real quality options</h3><p>You get the best quality the original source actually provides. We never fake or upscale beyond the original.</p></div></div>
+        <div class="step"><div class="step-num">06</div><div class="step-body"><h3>Save, then forget</h3><p>You save the file where permitted. Temporary server-side copies are deleted automatically afterward.</p></div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- PLATFORMS -->
+<div class="page" id="page-platforms">
+  <section class="block">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow"><i data-lucide="layout-grid"></i>Supported content</span>
+        <h2>Public media only.</h2>
+        <p>ZAID supports publicly accessible content across common formats, where it's technically and legally allowed. Anything private or protected is out of scope by design.</p>
+      </div>
+      <div class="plat-grid">
+        <div class="plat"><div class="ico"><i data-lucide="video"></i></div><h4>Public videos</h4><p>Openly viewable videos in their source format.</p><span class="tag">MP4 where available</span></div>
+        <div class="plat"><div class="ico"><i data-lucide="image"></i></div><h4>Public images</h4><p>Photos and graphics posted publicly.</p><span class="tag">JPG / PNG</span></div>
+        <div class="plat"><div class="ico"><i data-lucide="clapperboard"></i></div><h4>Public reels & shorts</h4><p>Short-form public video content.</p><span class="tag">MP4 where available</span></div>
+        <div class="plat"><div class="ico"><i data-lucide="file-text"></i></div><h4>Public posts</h4><p>Media attached to openly visible posts.</p><span class="tag">Source format</span></div>
+        <div class="plat"><div class="ico"><i data-lucide="user-round"></i></div><h4>Public creator content</h4><p>Where technically and legally permitted.</p><span class="tag">Conditional</span></div>
+        <div class="plat"><div class="ico"><i data-lucide="images"></i></div><h4>Public galleries</h4><p>Multi-image public collections.</p><span class="tag">JPG / PNG</span></div>
+      </div>
+
+      <div class="notice-box">
+        <i data-lucide="shield-alert"></i>
+        <div>
+          <h4>What ZAID will never do</h4>
+          <p>No private accounts, no login-required or password-protected content, no bypassing security systems, no unauthorized access. If a platform gates it, ZAID respects the gate.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- FAQ -->
+<div class="page" id="page-faq">
+  <section class="block">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow"><i data-lucide="help-circle"></i>FAQ</span>
+        <h2>Straight answers.</h2>
+      </div>
+      <div class="faq" id="faqList">
+        <div class="faq-item"><button class="faq-q" aria-expanded="false">Is ZAID Media Saver free to use?<i data-lucide="plus"></i></button><div class="faq-a"><div><p>Yes. The browser utility is free and requires no account, signup, or login to use.</p></div></div></div>
+        <div class="faq-item"><button class="faq-q" aria-expanded="false">Do I need to give you my social media password?<i data-lucide="plus"></i></button><div class="faq-a"><div><p>Never. We do not ask for platform passwords, and we cannot access private or login-protected content. If a service ever asks you for a social media password to "download," close it.</p></div></div></div>
+        <div class="faq-item"><button class="faq-q" aria-expanded="false">What content can I save?</button><div class="faq-a"><div><p>Only publicly accessible media: public videos, images, reels, and posts, where technically and legally allowed. Private, restricted, and login-gated content is not supported.</p></div></div></div>
+        <div class="faq-item"><button class="faq-q" aria-expanded="false">Do you store the files I process?<i data-lucide="plus"></i></button><div class="faq-a"><div><p>Temporary processed files are deleted automatically after your request is handled. We do not keep a browsable history of your activity or build a media library from it.</p></div></div></div>
+        <div class="faq-item"><button class="faq-q" aria-expanded="false">Can you improve the quality of a video or image?<i data-lucide="plus"></i></button><div class="faq-a"><div><p>No. We provide the best quality the original source actually offers. We do not artificially upscale or enhance beyond what the platform serves.</p></div></div></div>
+        <div class="faq-item"><button class="faq-q" aria-expanded="false">Is downloading public content legal?<i data-lucide="plus"></i></button><div class="faq-a"><div><p>It depends on the content, the creator, and the platform's rules. ZAID is a technical tool. You are responsible for having permission or a lawful reason to download, store, or reuse any file. When in doubt, ask the creator.</p></div></div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- CONTACT -->
+<div class="page" id="page-contact">
+  <section class="block">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow"><i data-lucide="mail"></i>Contact</span>
+        <h2>Get in touch.</h2>
+        <p>Questions, content removal requests, or copyright concerns. We read everything.</p>
+      </div>
+      <div class="contact-grid">
+        <form class="contact" id="contactForm">
+          <div class="fg"><label for="cName">Name</label><input id="cName" type="text" required placeholder="Your name"></div>
+          <div class="fg"><label for="cEmail">Email</label><input id="cEmail" type="email" required placeholder="you@email.com"></div>
+          <div class="fg"><label for="cTopic">Topic</label>
+            <select id="cTopic"><option>General question</option><option>Content removal request</option><option>Copyright / DMCA</option><option>Report abuse</option><option>Something else</option></select>
+          </div>
+          <div class="fg"><label for="cMsg">Message</label><textarea id="cMsg" required placeholder="How can we help?"></textarea></div>
+          <button type="submit" class="btn primary" style="align-self:flex-start"><i data-lucide="send"></i>Send message</button>
+        </form>
+        <aside class="contact-side">
+          <h3>Direct channels</h3>
+          <div class="row"><i data-lucide="mail"></i><div><div class="k">General</div><div class="v">hello@zaidmediasaver.app</div></div></div>
+          <div class="row"><i data-lucide="shield"></i><div><div class="k">Copyright & DMCA</div><div class="v">legal@zaidmediasaver.app</div></div></div>
+          <div class="row"><i data-lucide="clock"></i><div><div class="k">Response time</div><div class="v">Within 2 business days</div></div></div>
+          <p style="font-size:.85rem;color:var(--muted);margin-top:var(--sp-4);line-height:1.6">For content removal, include the direct link and proof of ownership or authority to act. See the <a href="#dmca" data-page="dmca" class="accent" style="font-weight:600">removal request policy</a>.</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- TERMS -->
+<div class="page" id="page-terms">
+  <div class="wrap"><article class="doc">
+    <span class="eyebrow"><i data-lucide="file-text"></i>Legal</span>
+    <h1>Terms of Service</h1>
+    <p class="updated">Last updated: July 12, 2026</p>
+    <p>These Terms govern your use of ZAID Media Saver (the "Service"). By using the Service, you agree to them. If you disagree, do not use the Service.</p>
+    <h2>1. What the Service is</h2>
+    <p>ZAID Media Saver is a technical utility that helps you access <strong>publicly available</strong> media through your browser. It does not host a content library, and it does not access private, restricted, or login-protected material.</p>
+    <h2>2. Acceptable use</h2>
+    <p>You agree to use the Service only for lawful purposes. You must not use it to:</p>
+    <ul>
+      <li>Access private accounts, password-protected, or login-required content.</li>
+      <li>Bypass or attempt to bypass any platform's security or access controls.</li>
+      <li>Infringe copyright or redistribute content without permission.</li>
+      <li>Overload, scrape at abusive scale, or otherwise disrupt the Service.</li>
+    </ul>
+    <h2>3. Your responsibility</h2>
+    <p>You are solely responsible for ensuring you have permission or a lawful reason to download, store, modify, or reuse any content. The Service is a tool; how you use it is your responsibility.</p>
+    <h2>4. No warranty</h2>
+    <p>The Service is provided "as is" without warranties of any kind. Availability, accuracy, and quality of processed media depend on the original source and may change without notice.</p>
+    <h2>5. Limitation of liability</h2>
+    <p>To the maximum extent permitted by law, ZAID Media Saver is not liable for any damages arising from your use of the Service, including any misuse of content you access through it.</p>
+    <h2>6. Changes</h2>
+    <p>We may update these Terms. Continued use after changes means you accept the updated Terms.</p>
+    <div class="callout"><p>Questions about these Terms? Reach us via the <a href="#contact" data-page="contact" class="accent" style="font-weight:600">contact page</a>.</p></div>
+  </article></div>
+</div>
+
+<!-- PRIVACY -->
+<div class="page" id="page-privacy">
+  <div class="wrap"><article class="doc">
+    <span class="eyebrow"><i data-lucide="lock"></i>Legal</span>
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated: July 12, 2026</p>
+    <p>Privacy is the point, not an afterthought. This policy explains what we do and, more importantly, what we don't.</p>
+    <h2>What we do not do</h2>
+    <ul>
+      <li>We do not ask for your social media passwords.</li>
+      <li>We do not require an account or login to use the Service.</li>
+      <li>We do not track you across other websites.</li>
+      <li>We do not sell personal data. There's barely any to sell.</li>
+    </ul>
+    <h2>Temporary processing data</h2>
+    <p>To process a link, we may briefly handle the media file and basic technical data (like the submitted URL). <strong>Temporary processed files are deleted automatically</strong> after your request completes.</p>
+    <h2>Minimal logs</h2>
+    <p>We may keep short-lived, non-identifying technical logs to prevent abuse, enforce rate limits, and keep the Service secure. These are not used to profile you.</p>
+    <h2>Cookies</h2>
+    <p>We use only what's necessary for the Service to function (such as remembering your light/dark theme). No advertising or cross-site tracking cookies.</p>
+    <h2>Your rights</h2>
+    <p>Because we store so little, there's little to request. If you have a privacy question, contact us and we'll help.</p>
+    <div class="callout"><p>In short: no login, no passwords, no cross-site tracking, and temporary files auto-delete.</p></div>
+  </article></div>
+</div>
+
+<!-- COPYRIGHT -->
+<div class="page" id="page-copyright">
+  <div class="wrap"><article class="doc">
+    <span class="eyebrow"><i data-lucide="copyright"></i>Legal</span>
+    <h1>Copyright Policy</h1>
+    <p class="updated">Last updated: July 12, 2026</p>
+    <p>ZAID Media Saver respects the intellectual property of creators and rights holders. This policy sets out how ownership works and how to raise a concern.</p>
+    <h2>Ownership stays with creators</h2>
+    <ul>
+      <li>The Service <strong>does not own</strong> any uploaded or processed content.</li>
+      <li>All copyright and intellectual property rights remain with the original creators and rights holders.</li>
+      <li>Users must not redistribute copyrighted material without the owner's permission.</li>
+      <li>Accessing content through the Service does not grant you any license or ownership of it.</li>
+    </ul>
+    <h2>Your obligations</h2>
+    <p>Before you download, store, modify, or reuse any content, make sure you have a lawful basis to do so: your own content, a license, permission from the creator, or another legitimate legal reason.</p>
+    <h2>Complaints</h2>
+    <p>Copyright complaints can be submitted through our removal request system. See the <a href="#dmca" data-page="dmca" class="accent" style="font-weight:600">DMCA / Content Removal page</a>.</p>
+    <div class="callout"><p>This service does not encourage copyright infringement, unauthorized redistribution, or misuse of content.</p></div>
+  </article></div>
+</div>
+
+<!-- DMCA -->
+<div class="page" id="page-dmca">
+  <div class="wrap"><article class="doc">
+    <span class="eyebrow"><i data-lucide="gavel"></i>Legal</span>
+    <h1>DMCA & Content Removal Request</h1>
+    <p class="updated">Last updated: July 12, 2026</p>
+    <p>If you're a rights holder and believe the Service has been used in connection with your content improperly, you can request action here.</p>
+    <h2>What to include</h2>
+    <ul>
+      <li>Identification of the copyrighted work involved.</li>
+      <li>The specific URL(s) or material at issue.</li>
+      <li>Your contact information (name, email, and, if relevant, organization).</li>
+      <li>A statement that you have a good-faith belief the use is not authorized.</li>
+      <li>A statement, under penalty of perjury, that the information is accurate and you are the owner or authorized to act on their behalf.</li>
+      <li>Your physical or electronic signature.</li>
+    </ul>
+    <h2>Where to send it</h2>
+    <p>Email <strong>legal@zaidmediasaver.app</strong> or use the <a href="#contact" data-page="contact" class="accent" style="font-weight:600">contact form</a> and select "Copyright / DMCA" as the topic.</p>
+    <h2>What happens next</h2>
+    <p>We review valid requests promptly and act where appropriate. We may also share the notice details with relevant parties as required to process it. Misrepresentations in a notice may carry legal consequences.</p>
+    <div class="callout"><p>Since the Service does not host a content library, most requests are handled by adjusting processing behavior and cooperating with the original platform's own removal process.</p></div>
+  </article></div>
+</div>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a class="logo" href="#home" data-page="home"><span class="mark"><i data-lucide="download"></i></span>ZAID<span style="color:var(--accent)">.</span></a>
+        <p>A privacy-focused browser utility for saving publicly available media. Built for lawful use and respect for creators.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Product</h5>
+        <a href="#home" data-page="home">Home</a>
+        <a href="#how" data-page="how">How It Works</a>
+        <a href="#platforms" data-page="platforms">Supported Platforms</a>
+        <a href="#faq" data-page="faq">FAQ</a>
+      </div>
+      <div class="foot-col">
+        <h5>Legal</h5>
+        <a href="#terms" data-page="terms">Terms of Service</a>
+        <a href="#privacy" data-page="privacy">Privacy Policy</a>
+        <a href="#copyright" data-page="copyright">Copyright Policy</a>
+        <a href="#dmca" data-page="dmca">DMCA / Removal</a>
+        <a href="#contact" data-page="contact">Contact</a>
+      </div>
+    </div>
+    <div class="legal-notice">
+      <p><strong>ZAID Media Saver provides a technical service for accessing publicly available media content.</strong> All copyrights and intellectual property rights belong to their respective owners and creators. Users are responsible for ensuring that they have permission or a lawful reason to download, store, modify, or use any content. This service does not encourage copyright infringement, unauthorized redistribution, or misuse of content. Users must follow the rules and policies of the original platforms and respect creator rights.</p>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 ZAID Media Saver. All rights reserved.</p>
+      <div class="mini">
+        <a href="#privacy" data-page="privacy">Privacy</a>
+        <a href="#terms" data-page="terms">Terms</a>
+        <a href="#copyright" data-page="copyright">Copyright</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"><i data-lucide="info"></i><span></span></div>
+
+<script>
+  // ---- Theme ----
+  const root = document.documentElement;
+  const themeBtn = document.getElementById('themeBtn');
+  const saved = localStorage.getItem('zaid-theme');
+  if(saved) root.setAttribute('data-theme', saved);
+  function syncThemeIcon(){
+    themeBtn.innerHTML = root.getAttribute('data-theme')==='dark'
+      ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
+    if(window.lucide) lucide.createIcons();
+  }
+  themeBtn.addEventListener('click', ()=>{
+    const next = root.getAttribute('data-theme')==='dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem('zaid-theme', next);
+    syncThemeIcon();
+  });
+
+  // ---- Routing ----
+  const pages = document.querySelectorAll('.page');
+  const navLinks = document.querySelectorAll('nav.links a');
+  function showPage(name){
+    let found=false;
+    pages.forEach(p=>{ const on = p.id==='page-'+name; p.classList.toggle('active',on); if(on) found=true; });
+    if(!found){ document.getElementById('page-home').classList.add('active'); name='home'; }
+    navLinks.forEach(a=>a.classList.toggle('active', a.dataset.page===name));
+    document.getElementById('navLinks').classList.remove('open');
+    window.scrollTo({top:0,behavior:'instant' in window ? 'auto':'auto'});
+  }
+  document.querySelectorAll('[data-page]').forEach(el=>{
+    el.addEventListener('click', e=>{
+      const t = el.dataset.page;
+      if(t){ e.preventDefault(); history.replaceState(null,'','#'+t); showPage(t); }
+    });
+  });
+  const initial = (location.hash||'#home').replace('#','');
+  showPage(initial);
+
+  // ---- Mobile menu ----
+  document.getElementById('menuBtn').addEventListener('click', ()=>{
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+
+  // ---- Toast ----
+  const toast = document.getElementById('toast');
+  let toastTimer;
+  function showToast(msg){
+    toast.querySelector('span').textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>toast.classList.remove('show'), 3800);
+  }
+
+  // ---- FAQ ----
+  document.querySelectorAll('.faq-q').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const open = btn.getAttribute('aria-expanded')==='true';
+      btn.setAttribute('aria-expanded', String(!open));
+      btn.nextElementSibling.setAttribute('data-open', String(!open));
+    });
+  });
+
+  // ---- API helper: one clean contract for all backend calls ----
+  async function apiRequest(endpoint, { method = 'GET', body } = {}) {
+    let response;
+    try {
+      response = await fetch(endpoint, {
+        method,
+        headers: body ? { 'Content-Type': 'application/json' } : undefined,
+        body: body ? JSON.stringify(body) : undefined
+      });
+    } catch (networkErr) {
+      throw new Error('Could not reach the server. Check your connection and try again.');
+    }
+    if (!response.ok) {
+      let message = `Request failed (${response.status})`;
+      try {
+        const errBody = await response.json();
+        if (errBody && errBody.message) message = errBody.message;
+      } catch (_) { /* body wasn't JSON — keep the default message */ }
+      throw new Error(message);
+    }
+    const contentType = response.headers.get('content-type') || '';
+    return contentType.includes('application/json') ? response.json() : response.blob();
+  }
+
+  // ---- Contact ----
+  const contactForm = document.getElementById('contactForm');
+  contactForm.addEventListener('submit', async e=>{
+    e.preventDefault();
+    const payload = {
+      name: document.getElementById('cName').value.trim(),
+      email: document.getElementById('cEmail').value.trim(),
+      topic: document.getElementById('cTopic').value,
+      message: document.getElementById('cMsg').value.trim()
+    };
+    try{
+      await apiRequest('/api/contact', { method:'POST', body: payload });
+      showToast('Message sent. We typically respond within 2 business days.');
+    }catch(err){
+      showToast('Backend not connected yet: wire up /api/contact to deliver messages.');
+    }finally{
+      contactForm.reset();
+    }
+  });
+
+  // ---- Processor ----
+  const urlInput = document.getElementById('urlInput');
+  const processBtn = document.getElementById('processBtn');
+  const pasteBtn = document.getElementById('pasteBtn');
+  const fieldError = document.getElementById('fieldError');
+  const skeleton = document.getElementById('skeleton');
+  const result = document.getElementById('result');
+  const qSelect = document.getElementById('qSelect');
+  const saveBtn = document.getElementById('saveBtn');
+
+  let lastProcessedUrl = null; // validated URL the current result card describes
+
+  pasteBtn.addEventListener('click', async ()=>{
+    try{ const t = await navigator.clipboard.readText(); if(t){ urlInput.value=t.trim(); urlInput.focus(); } }
+    catch(_){ showToast('Clipboard blocked by browser. Paste manually with Ctrl/Cmd+V.'); }
+  });
+
+  function setError(msg){
+    fieldError.querySelector('span').textContent = msg;
+    fieldError.classList.add('show');
+  }
+  function clearError(){ fieldError.classList.remove('show'); }
+
+  function validate(val){
+    if(!val) return 'Paste a media link first.';
+    let parsed;
+    try{ parsed = new URL(val); }
+    catch(_){ return 'That doesn\u2019t look like a valid URL.'; }
+    if(!/^https?:$/.test(parsed.protocol)) return 'Only http(s) links are supported.';
+    if(/(login|signin|private|account|password)/i.test(val)){
+      return 'This looks like private or login-required content. ZAID only handles public media.';
+    }
+    return null;
+  }
+
+  // Local fallback used only while /api/process isn't wired up to a real
+  // backend yet, so the interface can still be reviewed end-to-end. This is
+  // swapped out automatically the moment the real endpoint responds.
+  function demoClassify(url){
+    const u = url.toLowerCase();
+    const isImage = /(\.jpg|\.jpeg|\.png|\/photo|\/image|\/p\/)/.test(u);
+    return isImage
+      ? { type:'Image', badge:'Public image', format:'JPG', title:'Public image detected',
+          qualities:[['orig','Original (source)'],['1600','1600px wide'],['800','800px wide']], size:'2.1 MB' }
+      : { type:'Video', badge:'Public video', format:'MP4', title:'Public video detected',
+          qualities:[['1080','1080p (source max)'],['720','720p'],['480','480p'],['audio','Audio only (M4A)']], size:'8.4 MB' };
+  }
+
+  function renderResult(data){
+    document.getElementById('rBadge').textContent = data.badge || data.type || 'Public';
+    document.getElementById('rTitle').textContent = data.title || 'Public media detected';
+    document.getElementById('rType').textContent = data.type || '\u2014';
+    document.getElementById('rFormat').textContent = data.format || '\u2014';
+    document.getElementById('rSize').textContent = data.size || '\u2014';
+
+    qSelect.innerHTML = '';
+    (data.qualities || []).forEach(([value, label])=>{
+      const opt = document.createElement('option');
+      opt.value = value; opt.textContent = label;
+      qSelect.appendChild(opt);
+    });
+    document.getElementById('rQuality').textContent = qSelect.options.length
+      ? qSelect.options[0].textContent
+      : '\u2014';
+
+    result.classList.add('show');
+  }
+
+  qSelect.addEventListener('change', ()=>{
+    const opt = qSelect.options[qSelect.selectedIndex];
+    document.getElementById('rQuality').textContent = opt ? opt.textContent : '\u2014';
+  });
+
+  async function runProcess(){
+    clearError();
+    result.classList.remove('show');
+
+    const val = urlInput.value.trim();
+    const validationError = validate(val);
+    if(validationError){ setError(validationError); return; }
+
+    skeleton.classList.add('show');
+    processBtn.disabled = true;
+    processBtn.style.opacity = .7;
+
+    try{
+      let data;
+      try{
+        data = await apiRequest('/api/process', { method:'POST', body:{ url: val } });
+      }catch(apiErr){
+        console.warn('/api/process unavailable, showing demo preview:', apiErr.message);
+        data = demoClassify(val);
+      }
+      lastProcessedUrl = val;
+      renderResult(data);
+    }catch(err){
+      setError(err.message || 'Something went wrong. Please try again.');
+    }finally{
+      skeleton.classList.remove('show');
+      processBtn.disabled = false;
+      processBtn.style.opacity = 1;
+    }
+  }
+
+  processBtn.addEventListener('click', runProcess);
+  urlInput.addEventListener('keydown', e=>{ if(e.key==='Enter') runProcess(); });
+
+  saveBtn.addEventListener('click', async ()=>{
+    if(!lastProcessedUrl || !qSelect.value){ showToast('Process a link first.'); return; }
+    const originalContent = saveBtn.innerHTML;
+    saveBtn.disabled = true;
+    saveBtn.style.opacity = .7;
+    try{
+      const blob = await apiRequest('/api/download', {
+        method:'POST',
+        body:{ url:lastProcessedUrl, quality:qSelect.value }
+      });
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = '';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(blobUrl);
+      showToast('Download started.');
+    }catch(err){
+      showToast('Demo build: connect /api/download on the backend to enable real saves.');
+    }finally{
+      saveBtn.disabled = false;
+      saveBtn.style.opacity = 1;
+      saveBtn.innerHTML = originalContent;
+      if(window.lucide) lucide.createIcons();
+    }
+  });
+
+  // ---- Icons + init ----
+  if(window.lucide) lucide.createIcons();
+  syncThemeIcon();
+</script>
+</body>
+</html>
