@@ -4,7 +4,19 @@ import rateLimit from "express-rate-limit";
 import { config } from "../config/index.js";
 
 export function applySecurity(app) {
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          imgSrc: ["'self'", "data:", "https:"],
+          connectSrc: ["'self'"],
+        },
+      },
+    })
+  );
 
   app.use(
     cors({
