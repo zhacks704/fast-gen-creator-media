@@ -3,7 +3,7 @@ import * as apiController from "../controllers/api.controller.js";
 import { validateBody } from "../middleware/validate.js";
 
 const router = Router();
-
+console.log("API routes loaded");
 router.post("/process", apiController.process);
 router.post("/download", apiController.download);
 

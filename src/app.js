@@ -27,7 +27,7 @@ app.use(
 
 // Routes
 app.use(express.static("public"));
-app.use("/api", routes);
+app.use("/", routes);
 
 // 404 + error handling
 app.use(notFoundHandler);

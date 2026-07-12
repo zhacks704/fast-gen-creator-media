@@ -454,7 +454,7 @@
                   <label for="qSelect">Choose quality (source-limited)</label>
                   <select id="qSelect"></select>
                 </div>
-                <button class="btn primary" id="saveBtn" style="padding:12px 22px"><i data-lucide="download"></i>Save file</button>
+                <button class="btn primary" id="saveBtn" style="padding:12px 22px"><i data-lucide="download"></i>Download</button>
               </div>
             </div>
           </div>
@@ -958,35 +958,55 @@
   processBtn.addEventListener('click', runProcess);
   urlInput.addEventListener('keydown', e=>{ if(e.key==='Enter') runProcess(); });
 
-  saveBtn.addEventListener('click', async ()=>{
-    if(!lastProcessedUrl || !qSelect.value){ showToast('Process a link first.'); return; }
-    const originalContent = saveBtn.innerHTML;
+  async function downloadFile() {
+  try {
     saveBtn.disabled = true;
-    saveBtn.style.opacity = .7;
-    try{
-      const blob = await apiRequest('/api/download', {
-        method:'POST',
-        body:{ url:lastProcessedUrl, quality:qSelect.value }
-      });
-      const blobUrl = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = blobUrl;
-      a.download = '';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(blobUrl);
-      showToast('Download started.');
-    }catch(err){
-      showToast('Demo build: connect /api/download on the backend to enable real saves.');
-    }finally{
-      saveBtn.disabled = false;
-      saveBtn.style.opacity = 1;
-      saveBtn.innerHTML = originalContent;
-      if(window.lucide) lucide.createIcons();
-    }
-  });
+    saveBtn.style.opacity = 0.6;
 
+    const response = await fetch('/api/download', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({})
+    });
+
+    if (!response.ok) {
+      throw new Error('Download failed');
+    }
+
+    const blob = await response.blob();
+
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+
+    a.href = url;
+    a.download = 'download.txt';
+
+    document.body.appendChild(a);
+    a.click();
+
+    a.remove();
+    window.URL.revokeObjectURL(url);
+
+    showToast('Download started.');
+
+  } catch (err) {
+    console.error(err);
+    showToast('Download failed. Please try again.');
+
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.style.opacity = 1;
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+  }
+}
+
+saveBtn.addEventListener('click', downloadFile);
+     
   // ---- Icons + init ----
   if(window.lucide) lucide.createIcons();
   syncThemeIcon();
