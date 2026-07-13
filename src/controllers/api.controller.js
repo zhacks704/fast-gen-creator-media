@@ -54,9 +54,11 @@ export async function process(req, res, next) {
 // Handles POST /api/download
 export async function download(req, res, next) {
   try {
-    const filePath = "public/downloads/test.txt";
+    const result = await mainService.download(req.body);
 
-    res.download(filePath, "download.txt");
+    res.json({
+      data: result,
+    });
 
   } catch (err) {
     logger.error("Error in download controller:", err);

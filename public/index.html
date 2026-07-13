@@ -968,10 +968,12 @@
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({})
-    });
-
-    if (!response.ok) {
+      body: JSON.stringify({
+    url: lastProcessedUrl,
+    quality: qSelect.value
+  })
+});
+if (!response.ok) {
       throw new Error('Download failed');
     }
 

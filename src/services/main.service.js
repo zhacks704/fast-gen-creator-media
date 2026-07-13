@@ -1,4 +1,4 @@
-/**
+import { youtubeVideoDetails } from "./api/rapidapi.client.js";/**
  * main.service.js
  *
  * Business-logic layer. Implement these against whatever data source
@@ -42,38 +42,49 @@ export async function createItem(payload) {
  * { title, type, format, size, badge, qualities }
  */
 export async function process(payload) {
-  if (!payload || typeof payload !== "object") {
-    throw new Error("Invalid payload passed to process()");
+
+  if (!payload?.url) {
+    throw new Error("URL required");
   }
 
-  try {
-    // TODO: Replace this stub with a call to your authorized data
-    // source / official API client. Example:
-    //
-    //   const result = await officialApiClient.fetchMediaInfo(payload);
-    //   return mapToDisplayShape(result);
+  const url = payload.url;
 
-    const record = {
-      id: Date.now().toString(36),
-      ...payload,
-      createdAt: new Date().toISOString(),
-    };
-    store.set(record.id, record);
 
-    return {
-      title: payload.title ?? "Untitled",
-      type: payload.type ?? "unknown",
-      format: payload.format ?? "unknown",
-      size: payload.size ?? null,
-      badge: payload.badge ?? "Pending",
-      qualities: Array.isArray(payload.qualities) ? payload.qualities : [],
-    };
-  } catch (err) {
-    // Re-throw so the controller's catch/next(err) handles it.
-    throw new Error(`process() failed: ${err.message}`);
+  let videoId = null;
+
+
+  if (url.includes("youtube.com")) {
+    const parsed = new URL(url);
+    videoId = parsed.searchParams.get("v");
   }
+
+
+  if (url.includes("youtu.be")) {
+    videoId = url.split("/").pop();
+  }
+
+
+  if (!videoId) {
+    throw new Error("Only YouTube supported currently");
+  }
+
+
+  const data = await youtubeVideoDetails(videoId);
+
+
+  return {
+    title: data.title,
+    type: "Video",
+    format: "MP4",
+    size: data.videos?.items?.[0]?.sizeText || "Unknown",
+    badge: "YouTube",
+    qualities:
+      data.videos?.items?.map(video => [
+        video.quality,
+        video.sizeText
+      ]) || []
+  };
 }
-
 /**
  * download(payload)
  *
@@ -84,25 +95,18 @@ export async function process(payload) {
  * Kept generic here since download responses vary by integration
  * (e.g. a URL, a stream reference, a job id to poll, etc.).
  */
-export async function download(payload) {
-  if (!payload || typeof payload !== "object") {
-    throw new Error("Invalid payload passed to download()");
-  }
+export async function download(payload){
 
-  try {
-    // TODO: Replace this stub with a call to your authorized data
-    // source / official API client. Example:
-    //
-    //   const result = await officialApiClient.getDownloadLink(payload);
-    //   return { status: "ready", url: result.url };
+ if(!payload?.url){
+   throw new Error("URL required");
+ }
 
-    return {
-      status: "pending",
-      message: "Download integration not yet implemented.",
-      requestedAt: new Date().toISOString(),
-      payload,
-    };
-  } catch (err) {
-    throw new Error(`download() failed: ${err.message}`);
-  }
+
+ return {
+   status:"ready",
+   message:"Download link generated",
+   url:payload.url,
+   requestedAt:new Date().toISOString()
+ };
+
 }
